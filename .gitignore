@@ -25,3 +25,4 @@
 /symtab_apps.c
 cscope.out
 Make.dep
+.ccls-cache/
