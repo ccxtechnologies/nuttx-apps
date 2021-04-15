@@ -115,12 +115,12 @@ int get_phy_id(void)
   return phy_id;
 }
 
-int get_phy_reg(uint16_t phy_id, uint16_t reg_num, uint16_t *val)
+int get_phy_reg(char *ifname, uint16_t phy_id, uint16_t reg_num, uint16_t *val)
 {
   int ret;
   struct ifreq ifr;
 
-  strncpy(ifr.ifr_name, "eth0", IFNAMSIZ);
+  strncpy(ifr.ifr_name, ifname, IFNAMSIZ);
 
   ifr.ifr_mii_phy_id = phy_id;
   ifr.ifr_mii_reg_num = reg_num;
@@ -135,12 +135,12 @@ int get_phy_reg(uint16_t phy_id, uint16_t reg_num, uint16_t *val)
   return ret;
 }
 
-int set_phy_reg(uint16_t phy_id, uint16_t reg_num, uint16_t val)
+int set_phy_reg(char *ifname, uint16_t phy_id, uint16_t reg_num, uint16_t val)
 {
   int ret;
   struct ifreq ifr;
 
-  strncpy(ifr.ifr_name, "eth0", IFNAMSIZ);
+  strncpy(ifr.ifr_name, ifname, IFNAMSIZ);
 
   ifr.ifr_mii_phy_id = phy_id;
   ifr.ifr_mii_reg_num = reg_num;
@@ -165,7 +165,7 @@ int main(int argc, FAR char *argv[])
   int i;
 
   /* test related */
-
+  char *ifname;
   uint16_t phy_id;
   uint16_t reg_num;
   uint16_t val_in;
@@ -175,34 +175,41 @@ int main(int argc, FAR char *argv[])
 
   if (argc == 1)
     {
+      // printf("usage:\n");
+      // printf("\n");
+      // printf("  %s phy_id reg_no          -- read register\n", argv[0]);
+      // printf("  %s phy_id reg_no value    -- write register\n", argv[0]);
+      // printf("\n");
       printf("usage:\n");
       printf("\n");
-      printf("  %s phy_id reg_no          -- read register\n", argv[0]);
-      printf("  %s phy_id reg_no value    -- write register\n", argv[0]);
+      printf("  %s ifname phy_id reg_no          -- read register\n", argv[0]);
+      printf("  %s ifname phy_id reg_no value    -- write register\n", argv[0]);
       printf("\n");
       return -1;
     }
 
   initialize_socket();
 
-  if (argc == 4) /* Write to register */
+  if (argc == 5) /* Write to register */
     {
-      phy_id = strtol(argv[1], NULL, 16);
-      reg_num = strtol(argv[2], NULL, 16);
-      val_in = strtol(argv[3], NULL, 16);
+      ifname = argv[1];
+      phy_id = strtol(argv[2], NULL, 16);
+      reg_num = strtol(argv[3], NULL, 16);
+      val_in = strtol(argv[4], NULL, 16);
 
-      ret = set_phy_reg(phy_id, reg_num, val_in);
+      ret = set_phy_reg(ifname, phy_id, reg_num, val_in);
       if (ret != 0)
         {
           printf("%s() returned %d\n", "set_phy_reg", ret);
         }
     }
-  else if (argc == 3) /* Read from register */
+  else if (argc == 4) /* Read from register */
     {
-      phy_id = strtol(argv[1], NULL, 16);
-      reg_num = strtol(argv[2], NULL, 16);
+      ifname = argv[1];
+      phy_id = strtol(argv[2], NULL, 16);
+      reg_num = strtol(argv[3], NULL, 16);
 
-      ret = get_phy_reg(phy_id, reg_num, &val_out);
+      ret = get_phy_reg(ifname, phy_id, reg_num, &val_out);
       if (ret != 0)
         {
           printf("%s() returned %d\n", "get_phy_reg", ret);
@@ -212,13 +219,14 @@ int main(int argc, FAR char *argv[])
           printf("0x%4x\n", val_out);
         }
     }
-  else if (argc == 2)
+  else if (argc == 3)
     {
-      phy_id = strtol(argv[1], NULL, 16);
+      ifname = argv[1];
+      phy_id = strtol(argv[2], NULL, 16);
 
       for (i = 0; i < 32; i++)
         {
-          get_phy_reg(phy_id, i, &val_out);
+          get_phy_reg(ifname, phy_id, i, &val_out);
           printf("phy[%d][%d] = 0x%4x\n", phy_id, i, val_out);
         }
     }
