@@ -175,11 +175,6 @@ int main(int argc, FAR char *argv[])
 
   if (argc == 1)
     {
-      // printf("usage:\n");
-      // printf("\n");
-      // printf("  %s phy_id reg_no          -- read register\n", argv[0]);
-      // printf("  %s phy_id reg_no value    -- write register\n", argv[0]);
-      // printf("\n");
       printf("usage:\n");
       printf("\n");
       printf("  %s ifname phy_id reg_no          -- read register\n", argv[0]);
