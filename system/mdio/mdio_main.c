@@ -222,7 +222,15 @@ int main(int argc, FAR char *argv[])
       for (i = 0; i < 32; i++)
         {
           get_phy_reg(ifname, phy_id, i, &val_out);
-          printf("phy[%d][%d] = 0x%4x\n", phy_id, i, val_out);
+          if (i == 9 || i == 22 || i == 28 )
+            {
+              printf("\n--- reserved ---\n");
+            }
+          printf("phy[%d][0x%2x] = 0x%4x\n", phy_id, i, val_out);
+          if (i == 19 || i == 26 || i == 29)
+            {
+              printf("--- --- ---\n\n");
+            }
         }
     }
   else
