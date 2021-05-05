@@ -52,7 +52,7 @@
  * Name: psock_create
  ****************************************************************************/
 
-static int psock_create(void)
+static int psock_create(int16_t ifindex)
 {
   int sd;
   struct sockaddr_ll addr;
@@ -64,11 +64,11 @@ static int psock_create(void)
       perror("ERROR: failed to create packet socket");
       return -1;
     }
-
+  printf("sd = %d\n", sd);
   /* Prepare sockaddr struct */
 
   addr.sll_family = AF_PACKET;
-  addr.sll_ifindex = 0;
+  addr.sll_ifindex = ifindex;
   if (bind(sd, (const struct sockaddr *)&addr, addrlen) < 0)
     {
       perror("ERROR: binding socket failed");
@@ -116,7 +116,8 @@ static void netpkt_usage(void)
   printf("\n");
   printf(" -a     transmit and receive\n");
   printf(" -r     receive\n");
-  printf(" -t     transmit\n");
+  printf(" -t -0  transmit using the first interface from ifconfig output list\n");
+  printf(" -t -1  transmit using the second interface from ifconfig output list\n");
   printf(" -v     verbose\n");
   printf("\n");
 }
@@ -139,13 +140,15 @@ int main(int argc, FAR char *argv[])
   const int buflen = 128;
   const char da[6] = {0xf0, 0xde, 0xf1, 0x02, 0x43, 0x01};
   const char sa[6] = {0x00, 0xe0, 0xde, 0xad, 0xbe, 0xef};
+  // const char sa[6] = {0x92, 0xd2, 0x67, 0x7e, 0xf5, 0xb8};
 
   int opt;
   int verbose = 0;
   int do_rx = 0;
-  int do_rxtimes = 3;
+  int do_rxtimes = 500;
   int do_tx = 0;
   int do_txtimes = 3;
+  int16_t do_if = 0;
 
   if (argc == 1)
     {
@@ -155,7 +158,7 @@ int main(int argc, FAR char *argv[])
 
   /* Parse arguments */
 
-  while ((opt = getopt(argc, argv, "artv")) != -1)
+  while ((opt = getopt(argc, argv, "artv01")) != -1)
     {
       switch(opt)
         {
@@ -176,13 +179,23 @@ int main(int argc, FAR char *argv[])
             verbose = 1;
             break;
 
+          case '0':
+            do_if = 1;
+            printf("arg0\n");
+            break;
+
+          case '1':
+            do_if = 2;
+            printf("arg1\n");
+            break;
+
           default:
             netpkt_usage();
             return -1;
       }
   }
 
-  sd = psock_create();
+  sd = psock_create(do_if);
 
   if (do_tx)
     {
