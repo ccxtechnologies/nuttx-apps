@@ -1,5 +1,5 @@
 /****************************************************************************
- * netutils/telnetd/telnetd_daemon.c
+ * apps/netutils/telnetd/telnetd_daemon.c
  *
  *   Copyright (C) 2012, 2017 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
@@ -53,6 +53,7 @@
 #include <signal.h>
 #include <semaphore.h>
 #include <sched.h>
+#include <assert.h>
 #include <errno.h>
 #include <debug.h>
 
@@ -171,7 +172,7 @@ static int telnetd_daemon(int argc, FAR char *argv[])
 
   /* Create a new TCP socket to use to listen for connections */
 
-  listensd = socket(daemon->family, SOCK_STREAM, 0);
+  listensd = socket(daemon->family, SOCK_STREAM | SOCK_CLOEXEC, 0);
   if (listensd < 0)
     {
       nerr("ERROR: socket() failed for family %u: %d\n",

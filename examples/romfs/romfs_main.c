@@ -1,5 +1,5 @@
 /****************************************************************************
- * examples/romfs/romfs_main.c
+ * apps/examples/romfs/romfs_main.c
  *
  *   Copyright (C) 2008-2009, 2011 Gregory Nutt. All rights reserved.
  *   Author: Gregory Nutt <gnutt@nuttx.org>
@@ -60,6 +60,7 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/boardctl.h>
 #include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -95,10 +96,6 @@
 
 #ifdef CONFIG_DISABLE_MOUNTPOINT
 #  error "Mountpoint support is disabled"
-#endif
-
-#if CONFIG_NFILE_DESCRIPTORS < 4
-#  error "Not enough file descriptors"
 #endif
 
 #ifndef CONFIG_FS_ROMFS
@@ -478,15 +475,20 @@ static void checkdirectories(struct node_s *entry)
 int main(int argc, FAR char *argv[])
 {
   int ret;
+  struct boardioc_romdisk_s desc;
 
   /* Create a RAM disk for the test */
 
-  ret = romdisk_register(CONFIG_EXAMPLES_ROMFS_RAMDEVNO, testdir_img,
-                         NSECTORS(testdir_img_len),
-                         CONFIG_EXAMPLES_ROMFS_SECTORSIZE);
+  desc.minor    = CONFIG_EXAMPLES_ROMFS_RAMDEVNO;         /* Minor device number of the ROM disk. */
+  desc.nsectors = NSECTORS(testdir_img_len);              /* The number of sectors in the ROM disk */
+  desc.sectsize = CONFIG_EXAMPLES_ROMFS_SECTORSIZE;       /* The size of one sector in bytes */
+  desc.image    = (FAR uint8_t *)testdir_img;             /* File system image */
+
+  ret = boardctl(BOARDIOC_ROMDISK, (uintptr_t)&desc);
+
   if (ret < 0)
     {
-      printf("ERROR: Failed to create RAM disk\n");
+      printf("ERROR: Failed to create RAM disk: %s\n", strerror(errno));
       return 1;
     }
 
@@ -499,7 +501,7 @@ int main(int argc, FAR char *argv[])
               MS_RDONLY, NULL);
   if (ret < 0)
     {
-      printf("ERROR: Mount failed: %d\n", errno);
+      printf("ERROR: Mount failed: %s\n", strerror(errno));
       return 1;
     }
 

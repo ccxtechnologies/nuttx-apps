@@ -63,6 +63,7 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <assert.h>
 #include <errno.h>
 #include <dirent.h>
 #include <debug.h>
@@ -1106,8 +1107,8 @@ static void *nxplayer_playthread(pthread_addr_t pvarg)
           case AUDIO_MSG_COMPLETE:
 #ifdef CONFIG_DEBUG_FEATURES
             audinfo("Play complete.  outstanding=%d\n", outstanding);
-#endif
             DEBUGASSERT(outstanding == 0);
+#endif
             running = false;
             break;
 

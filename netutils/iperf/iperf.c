@@ -260,6 +260,8 @@ static int iperf_start_report(void)
       return -1;
     }
 
+  pthread_detach(thread);
+
   return 0;
 }
 
@@ -336,7 +338,20 @@ static int iperf_run_tcp_server(void)
       while (!s_iperf_ctrl.finish)
         {
           actual_recv = recv(sockfd, buffer, want_recv, 0);
-          if (actual_recv < 0)
+          if (actual_recv == 0)
+            {
+              printf("closed by the peer: %s,%d\n",
+                     inet_ntoa(remote_addr.sin_addr),
+                     htons(remote_addr.sin_port));
+
+              /* Note: unlike the original iperf, this implementation
+               * exits after finishing a single connection.
+               */
+
+              s_iperf_ctrl.finish = true;
+              break;
+            }
+          else if (actual_recv < 0)
             {
               iperf_show_socket_error_reason("tcp server recv",
                                              listen_socket);
@@ -653,6 +668,7 @@ static uint32_t iperf_get_buffer_len(void)
 int iperf_start(struct iperf_cfg_t *cfg)
 {
   int ret;
+  void *retval;
   struct sched_param param;
   pthread_t thread;
   pthread_attr_t attr;
@@ -696,6 +712,7 @@ int iperf_start(struct iperf_cfg_t *cfg)
       return -1;
     }
 
+  pthread_join(thread, &retval);
   return 0;
 }
 

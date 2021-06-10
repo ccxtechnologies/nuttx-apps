@@ -475,11 +475,11 @@ int wapi_get_freq(int sock, FAR const char *ifname, FAR double *freq,
     {
       /* Set flag. */
 
-      if (IW_FREQ_AUTO == (wrq.u.freq.flags & IW_FREQ_AUTO))
+      if (IW_FREQ_AUTO == wrq.u.freq.flags)
         {
           *flag = WAPI_FREQ_AUTO;
         }
-      else if (IW_FREQ_FIXED == (wrq.u.freq.flags & IW_FREQ_FIXED))
+      else if (IW_FREQ_FIXED == wrq.u.freq.flags)
         {
           *flag = WAPI_FREQ_FIXED;
         }
@@ -740,7 +740,7 @@ int wapi_set_essid(int sock, FAR const char *ifname, FAR const char *essid,
   wrq.u.essid.pointer = buf;
   wrq.u.essid.length =
     snprintf(buf, ((WAPI_ESSID_MAX_SIZE + 1) * sizeof(char)), "%s", essid);
-  wrq.u.essid.flags = (flag == WAPI_ESSID_ON);
+  wrq.u.essid.flags = flag;
 
   strncpy(wrq.ifr_name, ifname, IFNAMSIZ);
   ret = ioctl(sock, SIOCSIWESSID, (unsigned long)((uintptr_t)&wrq));

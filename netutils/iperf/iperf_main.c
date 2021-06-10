@@ -34,8 +34,8 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#ifdef CONFIG_EXAMPLES_IPERFTEST_DEVNAME
-#  define DEVNAME CONFIG_EXAMPLES_IPERFTEST_DEVNAME
+#ifdef CONFIG_NETUTILS_IPERFTEST_DEVNAME
+#  define DEVNAME CONFIG_NETUTILS_IPERFTEST_DEVNAME
 #else
 #  define DEVNAME "wlan0"
 #endif
@@ -214,6 +214,9 @@ int main(int argc, FAR char *argv[])
           cfg.time = cfg.interval;
         }
     }
+
+  arg_freetable((FAR void **)&iperf_args,
+                sizeof(iperf_args) / sizeof(FAR void *));
 
   printf("\n mode=%s-%s "
          "sip=%" PRId32 ".%" PRId32 ".%" PRId32 ".%" PRId32 ":%d,"

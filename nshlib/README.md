@@ -184,7 +184,6 @@ configuration options as described in the final section of this README. This
 capability also depends on:
 
 - `CONFIG_DISABLE_MOUNTPOINT` not set
-- `CONFIG_NFILE_DESCRIPTORS > 4`
 - `CONFIG_FS_ROMFS`
 
 ### Default Start-Up Behavior
@@ -419,7 +418,7 @@ All of the startup-behavior is contained in `rcS.template`. The role of
   Copy of the contents of the file at `<source-path>` to the location in the
   file system indicated by `<path-path>`
 
-- `date [-s "MMM DD HH:MM:SS YYYY"]`
+- `date [-s "MMM DD HH:MM:SS YYYY"] [-u]`
 
   Show or set the current date and time.
 

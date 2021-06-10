@@ -266,7 +266,7 @@ driver in `nuttx/include/nuttx/input/djoystick.h`.
 
 Configuration Pre-requisites:
 
-- `CONFIG_DJOYSTICK` – The discrete joystick driver.
+- `CONFIG_INPUT_DJOYSTICK` – The discrete joystick driver.
 
 Example Configuration:
 
@@ -275,23 +275,6 @@ Example Configuration:
   `/dev/djoy0`.
 - `CONFIG_EXAMPLES_DJOYSTICK_SIGNO` – Signal used to signal the test
   application. Default `13`.
-
-
-## `dsptest` DSP
-
-This is a Unit Test for the NuttX DSP library. It use Unity testing framework.
-
-Dependencies:
-
-```conf
-CONFIG_LIBDSP=y
-CONFIG_LIBDSP_DEBUG=y
-CONFIG_TESTING_UNITY=y
-```
-
-Optional configuration:
-
-- `CONFIG_TESTING_UNITY_OUTPUT_COLOR` – enable colored output.
 
 ## `elf` ELF loader
 
@@ -377,6 +360,11 @@ Dependencies:
 - `CONFIG_MTD_SMART=y` – SMART block driver support.
 - `CONFIG_BUILD_PROTECTED=n` and `CONFIG_BUILD_KERNEL=n` – This test uses
   internal OS interfaces and so is not available in the NUTTX kernel builds.
+
+## `foc` FOC motor controller
+
+A FOC motor controller based on the NuttX FOC driver and the NuttX FOC library.
+See `apps/foc/README.md` for more information.
 
 ## `flowc` Serial Hardware Flow Control
 
@@ -1651,6 +1639,15 @@ character per TCP transfer):
 - `CONFIG_STDIO_BUFFER_SIZE` – Some value `>= 64`
 - `CONFIG_STDIO_LINEBUFFER=y`
 
+## `termios` Simple Termios interface test
+
+This directory contains a simple application that uses the termios interface
+to change serial parameters. Just import a `nsh` config and enable the
+following symbols:
+
+- `CONFIG_SERIAL_TERMIOS`   – Enable the termios support.
+- `CONFIG_EXAMPLES_TERMIOS` – Enable the example itself.
+
 ## `thttpd` THTTPD server
 
 An example that builds `netutils/thttpd` with some simple NXFLAT CGI programs.
@@ -1781,8 +1778,6 @@ This is at trivial test of the Union File System. See
 
 - `CONFIG_DISABLE_MOUNTPOINT`          – Mountpoint support must not be
   disabled.
-- `CONFIG_NFILE_DESCRIPTORS > 4`       – Some file descriptors must be
-  allocated.
 - `CONFIG_FS_ROMFS`                    – ROMFS support is required.
 - `CONFIG_FS_UNIONFS`                  – Union File System support is required.
 
