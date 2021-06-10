@@ -224,6 +224,7 @@ int main(int argc, FAR char *argv[])
                   printf("transmitted %d octets\n", txc);
                   print_buf(buf, txc);
                 }
+              printf("TRANSMITTED PACKET #%d\n\n", i + 1);
             }
         }
 
