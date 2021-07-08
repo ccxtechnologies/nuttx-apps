@@ -85,7 +85,7 @@ int main(int argc, FAR char *argv[])
           break;
         }
 
-      printf("U=%12u uV I=%12d uA\n", sample.voltage, sample.current);
+      printf("U=%12u uV I=%12d uA P=%12u uW\n", sample.voltage, sample.current, sample.power);
 
       usleep(500000);
     }
