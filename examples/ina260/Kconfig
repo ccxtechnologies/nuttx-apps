@@ -18,12 +18,6 @@ config EXAMPLES_INA260_PROGNAME
 		This is the name of the program that will be used when the NSH ELF
 		program is installed.
 
-config INA260_SHUNTVAL
-	int "Shunt resistor value in micro-ohms"
-	default 5000
-	---help---
-		The shunt resistor value in micro-ohms.
-
 config INA260_DEVICE_PATH
 	string "INA260 device name"
 	default "/dev/ina260"
